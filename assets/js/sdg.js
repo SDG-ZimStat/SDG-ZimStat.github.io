@@ -1290,8 +1290,8 @@ var indicatorModel = function (options) {
   /**
  * Constants to be used in indicatorModel.js and helper functions.
  */
-var UNIT_COLUMN = 'Units';
-var SERIES_COLUMN = 'Series';
+var UNIT_COLUMN = 'UNIT_MEASURE';
+var SERIES_COLUMN = 'SERIES';
 var GEOCODE_COLUMN = 'GeoCode';
 var YEAR_COLUMN = 'Year';
 var VALUE_COLUMN = 'Value';
@@ -2125,6 +2125,19 @@ function getDataBySelectedFields(rows, selectedFields) {
 }
 
 /**
+ * @param {Array} rows
+ * @param {Array} selectedFields Field items
+ * @return {Array} Rows
+ */
+function hasDataBySelectedFields(rows, selectedFields) {
+  return rows.some(function(row) {
+    return selectedFields.some(function(field) {
+      return field.values.includes(row[field.field]);
+    });
+  });
+}
+
+/**
  * @param {Array} fieldNames
  * @param {Object} dataSchema
  */
@@ -2884,6 +2897,7 @@ function getAllObservationAttributes(rows) {
     getDataByUnit: getDataByUnit,
     getDataBySeries: getDataBySeries,
     getDataBySelectedFields: getDataBySelectedFields,
+    hasDataBySelectedFields: hasDataBySelectedFields,
     getUnitFromStartValues: getUnitFromStartValues,
     getSeriesFromStartValues: getSeriesFromStartValues,
     selectFieldsFromStartValues: selectFieldsFromStartValues,
@@ -3156,12 +3170,19 @@ function getAllObservationAttributes(rows) {
         this.selectedSeries = startingSeries;
       }
 
-      // Decide on starting field values if not changing series.
+      // Decide on starting field values.
       var startingFields = this.selectedFields;
-      if (this.hasStartValues && !options.changingSeries) {
+      var useMinimumStartingFields = false;
+      if (this.hasStartValues) {
         startingFields = helpers.selectFieldsFromStartValues(this.startValues, this.selectableFields);
+        // Quick test to see if this would result in zero matches, in cases where
+        // the series is being changed and the new series would not show data.
+        if (options.changingSeries && !helpers.hasDataBySelectedFields(this.data, startingFields)) {
+          useMinimumStartingFields = true;
+          startingFields = this.selectedFields;
+        }
       }
-      else {
+      if (!this.hasStartValues || useMinimumStartingFields) {
         if (headline.length === 0) {
           startingFields = helpers.selectMinimumStartingFields(this.data, this.selectableFields, this.selectedUnit);
         }
@@ -3297,8 +3318,8 @@ var mapView = function () {
     $('.map').show();
     $('#map').sdgMap({
       indicatorId: indicatorId,
-      mapOptions: {"disaggregation_controls":false,"minZoom":5,"maxZoom":10,"tileURL":"https://tile.openstreetmap.org/{z}/{x}/{y}.png","tileOptions":{"id":"","accessToken":"","attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"},"colorRange":"chroma.brewer.BuGn","noValueColor":"#f0f0f0","styleNormal":{"weight":1,"opacity":1,"fillOpacity":0.7,"color":"#888888","dashArray":""},"styleHighlighted":{"weight":1,"opacity":1,"fillOpacity":0.7,"color":"#111111","dashArray":""},"styleStatic":{"weight":2,"opacity":1,"fillOpacity":0,"color":"#172d44"}},
-      mapLayers: [{"subfolder":"regions","label":"indicator.map","min_zoom":0,"max_zoom":20,"staticBorders":false}],
+      mapOptions: {"disaggregation_controls":false,"minZoom":4,"maxZoom":10,"tileURL":"https://{s}.tile.jawg.io/{id}/{z}/{x}/{y}{r}.png?access-token={accessToken}","tileOptions":{"id":"ed56748f-29f9-465e-9269-c715674ee5ff","accessToken":"yrcGMvxCkRD6zZBF4x3mnAT3OGQJstAj7JvG1iy1UjEdy6JFeDfnzKvXrTK07CxF","attribution":"<a href=\"http://jawg.io\" title=\"Provider of map tiles\" target=\"_blank\">&copy; <b>Jawg</b>Maps</a> &copy; <a href=\"https://www.openstreetmap.org/copyright\" title=\"Provider of map visual data copywrite information\">OpenStreetMap</a> contributors | <a href=\"http://geoportal.statistics.gov.uk/\" title=\"The Open Geography portal from the Office for National Statistics\">ONS</a>"},"colorRange":"opensdg.mapColors.default","noValueColor":"#f0f0f0","styleNormal":{"weight":1,"opacity":1,"fillOpacity":0.7,"color":"#888888","dashArray":""},"styleHighlighted":{"weight":1,"opacity":1,"fillOpacity":0.7,"color":"#111111","dashArray":""},"styleStatic":{"weight":2,"opacity":1,"fillOpacity":0,"color":"#172d44","dashArray":"5,5"}},
+      mapLayers: [{"subfolder":"regions","label":"Zones","min_zoom":2,"max_zoom":6,"staticBorders":true}],
       precision: precision,
       precisionItems: precisionItems,
       decimalSeparator: decimalSeparator,
@@ -4287,10 +4308,10 @@ opensdg.chartTypes.base = function(info) {
         value = parseInt(value, 10);
     }
     if (value === 1) {
-        return 'Yes';
+        return translations.indicator.affirmative;
     }
     else if (value === -1) {
-        return 'No';
+        return translations.indicator.negative;
     }
     return '';
 }
@@ -4424,6 +4445,15 @@ function initialiseDataTable(el, info) {
                     var additionalInfo = Object.assign({}, info);
                     additionalInfo.row = row;
                     additionalInfo.col = col;
+                    if (info.chartType === 'binary') {
+                        var cellDataInt = Number(cellData);
+                        if (cellDataInt === 1) {
+                            cellData = translations.indicator.affirmative;
+                        }
+                        else if (cellDataInt === 0 || cellDataInt === -1) {
+                            cellData = translations.indicator.negative;
+                        }
+                    }
                     $(td).text(alterDataDisplay(cellData, rowData, 'table cell', additionalInfo));
                 },
             },
@@ -4444,7 +4474,7 @@ function initialiseDataTable(el, info) {
  * @return null
  */
 function createSelectionsTable(chartInfo) {
-    createTable(chartInfo.selectionsTable, chartInfo.indicatorId, '#selectionsTable', chartInfo.isProxy, chartInfo.observationAttributesTable);
+    createTable(chartInfo.selectionsTable, chartInfo.indicatorId, '#selectionsTable', chartInfo.isProxy, chartInfo.observationAttributesTable, chartInfo.chartType);
     $('#tableSelectionDownload').empty();
     createTableTargetLines(chartInfo.graphAnnotations);
     createDownloadButton(chartInfo.selectionsTable, 'Table', chartInfo.indicatorId, '#tableSelectionDownload', chartInfo.selectedSeries, chartInfo.selectedUnit);
@@ -4494,9 +4524,10 @@ function tableHasData(table) {
  * @param {Element} el
  * @param {bool} isProxy
  * @param {Object} observationAttributesTable
+ * @param {String} chartType
  * @return null
  */
-function createTable(table, indicatorId, el, isProxy, observationAttributesTable) {
+function createTable(table, indicatorId, el, isProxy, observationAttributesTable, chartType) {
 
     var table_class = OPTIONS.table_class || 'table table-hover';
 
@@ -4551,6 +4582,7 @@ function createTable(table, indicatorId, el, isProxy, observationAttributesTable
             table: table,
             indicatorId: indicatorId,
             observationAttributesTable: observationAttributesTable,
+            chartType: chartType,
         };
         initialiseDataTable(el, alterationInfo);
 
@@ -6132,8 +6164,8 @@ $(function() {
             this.currentDisaggregation = 0;
             this.displayedDisaggregation = 0;
             this.needsMapUpdate = false;
-            this.seriesColumn = 'Series';
-            this.unitsColumn = 'Units';
+            this.seriesColumn = 'SERIES';
+            this.unitsColumn = 'UNIT_MEASURE';
             this.displayForm = false;
             this.updateDisaggregations(plugin.startValues);
         },
