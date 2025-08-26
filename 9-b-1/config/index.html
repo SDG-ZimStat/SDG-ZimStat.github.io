@@ -44,6 +44,8 @@ var opensdg = {
 
   language: 'en',
 
+  language_numbers: 'en',
+
   mapColors: {
     "default": [
         "#c4e1c6",
@@ -142,7 +144,7 @@ var translations = {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20250820141601">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20250826080051">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -762,70 +764,71 @@ data-event-label="high"
             }
         },
         "progress_calculation_options": {
-            "type": "object",
+            "type": "array",
             "title": "Progress calculation options",
             "description": "These settings control the automatic selection of a progress status when auto_progress_calculation is toggle on.",
-            "properties": {
-                "base_year": {
-                    "type": ["integer", "string"],
-                    "title": "Base year",
-                    "description": "Default: 2015. Base year with which to compare current progress."
-                },
-                "direction": {
-                    "type": "string",
-                    "title": "Direction",
-                    "description": "The indicator's desired direction of progress -- towards more positive values or more negative values. Default: negative.",
-                    "enum": ["negative", "positive"]
-                },
-                "disaggregation": {
-                    "type": "array",
-                    "title": "Disaggregations",
-                    "description": "Disaggregation(s) to include in the progress calculation from the provided series and/or unit if there is no headline. If more than one disaggregation is specified, a progress value is calculated for each specified disaggregation and the median is taken as the final progress value for the indicator.",
-                    "items": {
-                        "type": "object",
-                        "title": "Disaggregation",
-                        "properties": {
-                            "field": {
-                                "type": "string",
-                                "title": "Field",
-                                "description": "Disaggregation column name"
-                            },
-                            "value": {
-                                "type": "string",
-                                "title": "Value",
-                                "description": "Name of sub-category within disaggregation column"
+            "items": {
+                "type": "object",
+                "title": "Progress calculation options",
+                "properties": {
+                    "base_year": {
+                        "type": ["integer", "string"],
+                        "title": "Base year",
+                        "description": "Default: 2015. Base year with which to compare current progress."
+                    },
+                    "direction": {
+                        "type": "string",
+                        "title": "Direction",
+                        "description": "The indicator's desired direction of progress -- towards more positive values or more negative values. Default: negative.",
+                        "enum": ["negative", "positive"]
+                    },
+                    "disaggregation": {
+                        "type": "array",
+                        "title": "Disaggregations",
+                        "description": "Disaggregation(s) to include in the progress calculation from the provided series and/or unit if there is no headline. If more than one disaggregation is specified, a progress value is calculated for each specified disaggregation and the median is taken as the final progress value for the indicator.",
+                        "items": {
+                            "type": "object",
+                            "title": "Disaggregation",
+                            "properties": {
+                                "field": {
+                                    "type": "string",
+                                    "title": "Field",
+                                    "description": "Disaggregation column name"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "title": "Value",
+                                    "description": "Name of sub-category within disaggregation column"
+                                }
                             }
                         }
+                    },
+                    "limit": {
+                        "type": "number",
+                        "title": "Limit",
+                        "description": "Default: None. Only applicable if the target is None. Cannot be zero. If direction is 'positive', this is the maximum possible ceiling for the indicator values. If direction is 'negative', this is the minimum possible floor for the indicator values."
+                    },
+                    "series": {
+                        "type": "string",
+                        "title": "Series",
+                        "description": "Series for the progress calculation"
+                    },
+                    "target": {
+                        "type": "number",
+                        "title": "Target",
+                        "description": "Default: None. Value required to achieve target. Cannot be zero -- a target of zero will be reset to 0.001."
+                    },
+                    "target_year": {
+                        "type": ["integer", "string"],
+                        "title": "Target year",
+                        "description": "Default: 2030. Year by which the target is expected to be achieved."
+                    },
+                    "unit": {
+                        "type": "string",
+                        "title": "Unit",
+                        "description": "Unit for the progress calculation"
                     }
-                },
-                "limit": {
-                    "type": "number",
-                    "title": "Limit",
-                    "description": "Default: None. Only applicable if the target is None. Cannot be zero. If direction is 'positive', this is the maximum possible ceiling for the indicator values. If direction is 'negative', this is the minimum possible floor for the indicator values."
-                },
-                "series": {
-                    "type": "string",
-                    "title": "Series",
-                    "description": "Series for the progress calculation"
-                },
-                "target": {
-                    "type": "number",
-                    "title": "Target",
-                    "description": "Default: None. Value required to achieve target. Cannot be zero -- a target of zero will be reset to 0.001."
-                },
-                "target_year": {
-                    "type": ["integer", "string"],
-                    "title": "Target year",
-                    "description": "Default: 2030. Year by which the target is expected to be achieved."
-                },
-                "unit": {
-                    "type": "string",
-                    "title": "Unit",
-                    "description": "Unit for the progress calculation"
-                },
-
-                
-                
+                }
             }
         },
         "progress_status": {
@@ -1862,6 +1865,9 @@ data-event-label="high"
       opensdg.configForm.repoUrl = "https://github.com/SDG-Zimbabwe/data";
     
   </script>
+  
+  
+  
   <script src="https://open-sdg.org/open-sdg-config-form/bundle.js"></script>
 </div>
 <footer role="contentinfo">
@@ -1944,12 +1950,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Search';</script>
 
-<script src='/assets/js/sdg.js?v=20250820141601'></script>
+<script src='/assets/js/sdg.js?v=20250826080051'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20250820141601"></script><script>
+    <script src="/assets/js/custom.js?v=20250826080051"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>
