@@ -144,7 +144,7 @@ var translations = {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
         <link res="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" crossorigin="">
-        <link rel="stylesheet" href="/assets/css/style.css?v=20251111184109">
+        <link rel="stylesheet" href="/assets/css/style.css?v=20251112081514">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
           integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
           crossorigin=""/>
@@ -287,10 +287,14 @@ data-event-label="high"
 
 
 
-  <div class="container g-0 ">
+  <div class="container g-0 goal-showing-progress">
     <div class="row align-items-end">
       <div class="col">
         <h2 class="goal-page-heading">Targets and indicators</h2>
+      </div>
+      
+      <div class="col-lg-2 d-none d-lg-block progress-column-header">
+        <span aria-hidden="true">How are we doing against the 2030 target?</span>
       </div>
       
     </div>
@@ -306,6 +310,8 @@ data-event-label="high"
           <div class="col goal-page-target-name">
             <span class="target-name">By 2030, ensure access for all to adequate, safe and affordable housing and basic services and upgrade slums</span>
           </div>
+          
+          <div class="col-lg-2 d-none d-lg-block"></div>
           
       </div>
         
@@ -362,6 +368,8 @@ data-event-label="high"
             <span class="target-name">By 2030, provide access to safe, affordable, accessible and sustainable transport systems for all, improving road safety, notably by expanding public transport, with special attention to the needs of those in vulnerable situations, women, children, persons with disabilities and older persons</span>
           </div>
           
+          <div class="col-lg-2 d-none d-lg-block"></div>
+          
       </div>
         
 
@@ -416,6 +424,8 @@ data-event-label="high"
           <div class="col goal-page-target-name">
             <span class="target-name">By 2030, enhance inclusive and sustainable urbanization and capacity for participatory, integrated and sustainable human settlement planning and management in all countries</span>
           </div>
+          
+          <div class="col-lg-2 d-none d-lg-block"></div>
           
       </div>
         
@@ -512,6 +522,8 @@ data-event-label="high"
             <span class="target-name">Strengthen efforts to protect and safeguard the world’s cultural and natural heritage</span>
           </div>
           
+          <div class="col-lg-2 d-none d-lg-block"></div>
+          
       </div>
         
 
@@ -566,6 +578,8 @@ data-event-label="high"
           <div class="col goal-page-target-name">
             <span class="target-name">By 2030, significantly reduce the number of deaths and the number of people affected and substantially decrease the direct economic losses relative to global gross domestic product caused by disasters, including water-related disasters, with a focus on protecting the poor and people in vulnerable situations</span>
           </div>
+          
+          <div class="col-lg-2 d-none d-lg-block"></div>
           
       </div>
         
@@ -702,6 +716,8 @@ data-event-label="high"
             <span class="target-name">By 2030, reduce the adverse per capita environmental impact of cities, including by paying special attention to air quality and municipal and other waste management</span>
           </div>
           
+          <div class="col-lg-2 d-none d-lg-block"></div>
+          
       </div>
         
 
@@ -796,6 +812,8 @@ data-event-label="high"
           <div class="col goal-page-target-name">
             <span class="target-name">By 2030, provide universal access to safe, inclusive and accessible, green and public spaces, in particular for women and children, older persons and persons with disabilities</span>
           </div>
+          
+          <div class="col-lg-2 d-none d-lg-block"></div>
           
       </div>
         
@@ -892,6 +910,8 @@ data-event-label="high"
             <span class="target-name">Support positive economic, social and environmental links between urban, peri-urban and rural areas by strengthening national and regional development planning</span>
           </div>
           
+          <div class="col-lg-2 d-none d-lg-block"></div>
+          
       </div>
         
 
@@ -947,6 +967,8 @@ data-event-label="high"
             <span class="target-name">By 2020, substantially increase the number of cities and human settlements adopting and implementing integrated policies and plans towards inclusion, resource efficiency, mitigation and adaptation to climate change, resilience to disasters, and develop and implement, in line with the Sendai Framework for Disaster Risk Reduction 2015–2030, holistic disaster risk management at all levels</span>
           </div>
           
+          <div class="col-lg-2 d-none d-lg-block"></div>
+          
       </div>
         
 
@@ -982,6 +1004,28 @@ data-event-label="high"
 
 
         </li></ul>
+
+
+            </div>
+            
+            <div class="col-lg-2 goal-page-indicator-progress">
+              <span class="visually-hidden">Progress status</span>
+              
+    
+    
+        <div class="progress-status">
+        
+            <div class="progress-status-label">
+                Target achieved
+            </div>
+        
+        
+            <div class="progress-status-image">
+                <img src="/assets/img/progress/target-achieved-gauge.png" alt="Target achieved" />
+            </div>
+        
+        </div>
+    
 
 
             </div>
@@ -1023,6 +1067,12 @@ data-event-label="high"
 
         </li></ul>
 
+
+            </div>
+            
+            <div class="col-lg-2 goal-page-indicator-progress">
+              <span class="visually-hidden">Progress status</span>
+              
 
             </div>
             
@@ -1116,12 +1166,12 @@ ga('send', 'pageview');
 <script>translations['search'] = translations['search'] || {};
     translations['search']['search'] = 'Search';</script>
 
-<script src='/assets/js/sdg.js?v=20251111184109'></script>
+<script src='/assets/js/sdg.js?v=20251112081514'></script>
 
 
     
     
-    <script src="/assets/js/custom.js?v=20251111184109"></script><script>
+    <script src="/assets/js/custom.js?v=20251112081514"></script><script>
     new indicatorInit();
     new accessibilitySwitcher();
 </script>
